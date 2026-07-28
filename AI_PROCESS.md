@@ -154,6 +154,16 @@ frente a la secuencia de ramas.
 las decisiones tomadas después de escribirlo (puerto 5433, conversión de NUMERIC, versión de TypeORM) y
 omitiendo las secciones de proceso que ya viven en este documento.
 
+### Prompt 14
+
+> si
+
+**Contexto:** aprobación de los dos commits propuestos para la rama `feature/database-schema`, después de
+verificar la capa de persistencia contra el contenedor en marcha.
+
+**Respuesta de la IA:** ejecutó ambos commits, abrió el PR #3, lo integró en `develop` y continuó con la
+rama `feature/project-crud`.
+
 ---
 
 ## 3. Cómo aprendí EVM y cómo validé las fórmulas
@@ -358,4 +368,5 @@ EVM y la demostración numérica está en la sección 5.
 | `develop` | Rama de integración |
 | `feature/project-setup` | Integrada vía PR #1 |
 | `feature/evm-calculation-engine` | Integrada vía PR #2 |
-| `feature/database-schema` | En curso |
+| `feature/database-schema` | Integrada vía PR #3 |
+| `feature/project-crud` | En curso |

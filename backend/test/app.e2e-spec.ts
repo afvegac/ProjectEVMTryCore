@@ -1,26 +1,17 @@
 import { INestApplication } from '@nestjs/common';
-import { Test, TestingModule } from '@nestjs/testing';
 import { DataSource } from 'typeorm';
 import { Activity } from './../src/activities/activity.entity';
-import { AppModule } from './../src/app.module';
+import { createTestApp } from './test-app';
 
 /** Suma de los BAC del proyecto de referencia que siembra db/init/02-seed.sql. */
 const SEEDED_TOTAL_BUDGET = 50_000;
 
-/**
- * Requiere la base de datos en marcha: `docker compose up -d` desde la raíz del repositorio.
- */
 describe('AppModule (e2e)', () => {
   let app: INestApplication;
   let dataSource: DataSource;
 
   beforeAll(async () => {
-    const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [AppModule],
-    }).compile();
-
-    app = moduleFixture.createNestApplication();
-    await app.init();
+    app = await createTestApp();
     dataSource = app.get(DataSource);
   });
 
