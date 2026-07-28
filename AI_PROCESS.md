@@ -164,6 +164,21 @@ verificar la capa de persistencia contra el contenedor en marcha.
 **Respuesta de la IA:** ejecutó ambos commits, abrió el PR #3, lo integró en `develop` y continuó con la
 rama `feature/project-crud`.
 
+### Prompt 15
+
+> levanta el app quiero verla
+
+**Respuesta de la IA:** advirtió primero que el dashboard todavía no existía —el frontend seguía siendo el
+scaffold de Angular— y levantó el API y el servidor de desarrollo. Demostró el CRUD sobre los datos
+sembrados y los cuatro casos del contrato de error (nombre vacío, propiedad no declarada, identificador
+inexistente e identificador que no es UUID), que devuelven el mismo esquema con distinto código.
+
+### Prompt 16
+
+> si dale, sigue con actividades y el endpoint EVM
+
+**Respuesta de la IA:** integró el PR #4 y continuó con `feature/activity-crud`.
+
 ---
 
 ## 3. Cómo aprendí EVM y cómo validé las fórmulas
@@ -369,4 +384,5 @@ EVM y la demostración numérica está en la sección 5.
 | `feature/project-setup` | Integrada vía PR #1 |
 | `feature/evm-calculation-engine` | Integrada vía PR #2 |
 | `feature/database-schema` | Integrada vía PR #3 |
-| `feature/project-crud` | En curso |
+| `feature/project-crud` | Integrada vía PR #4 |
+| `feature/activity-crud` | En curso |

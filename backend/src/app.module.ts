@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ActivitiesModule } from './activities/activities.module';
 import { buildDatabaseOptions } from './config/database.config';
 import { ProjectsModule } from './projects/projects.module';
 
@@ -12,6 +13,7 @@ import { ProjectsModule } from './projects/projects.module';
       useFactory: buildDatabaseOptions,
     }),
     ProjectsModule,
+    ActivitiesModule,
   ],
 })
 export class AppModule {}
