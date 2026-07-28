@@ -28,15 +28,20 @@ VALUES (
 )
 ON CONFLICT (id) DO NOTHING;
 
+-- Las marcas de tiempo se fijan explícitamente y no se dejan al valor por defecto: `now()` devuelve
+-- el mismo instante para las tres filas de una misma sentencia, y con `created_at` empatado el orden
+-- de la tabla y de la gráfica quedaría a merced del plan de ejecución.
 INSERT INTO activities (
     project_id,
     name,
     budget_at_completion,
     planned_progress_percent,
     actual_progress_percent,
-    actual_cost
+    actual_cost,
+    created_at,
+    updated_at
 )
 VALUES
-    ('11111111-1111-4111-8111-111111111111', 'Diseño de arquitectura', 10000.00, 100.00, 100.00,  9000.00),
-    ('11111111-1111-4111-8111-111111111111', 'Desarrollo del backend', 20000.00,  75.00,  50.00, 12000.00),
-    ('11111111-1111-4111-8111-111111111111', 'Pruebas de integración', 20000.00,  50.00,   0.00,     0.00);
+    ('11111111-1111-4111-8111-111111111111', 'Diseño de arquitectura', 10000.00, 100.00, 100.00,  9000.00, '2026-07-01 08:00:00+00', '2026-07-01 08:00:00+00'),
+    ('11111111-1111-4111-8111-111111111111', 'Desarrollo del backend', 20000.00,  75.00,  50.00, 12000.00, '2026-07-01 08:00:01+00', '2026-07-01 08:00:01+00'),
+    ('11111111-1111-4111-8111-111111111111', 'Pruebas de integración', 20000.00,  50.00,   0.00,     0.00, '2026-07-01 08:00:02+00', '2026-07-01 08:00:02+00');

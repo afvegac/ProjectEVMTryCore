@@ -3,6 +3,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ActivitiesModule } from './activities/activities.module';
 import { buildDatabaseOptions } from './config/database.config';
+import { EvmModule } from './evm/evm.module';
 import { ProjectsModule } from './projects/projects.module';
 
 @Module({
@@ -14,6 +15,7 @@ import { ProjectsModule } from './projects/projects.module';
     }),
     ProjectsModule,
     ActivitiesModule,
+    EvmModule,
   ],
 })
 export class AppModule {}

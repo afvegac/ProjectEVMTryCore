@@ -75,13 +75,14 @@ describe('ProjectsService', () => {
   });
 
   describe('findOne', () => {
-    it('devuelve el proyecto solicitado', async () => {
+    it('devuelve el proyecto solicitado sin cargar relaciones', async () => {
       const project = buildProject();
       repository.findOne.mockResolvedValue(project);
 
       await expect(service.findOne(PROJECT_ID)).resolves.toBe(project);
       expect(repository.findOne).toHaveBeenCalledWith({
         where: { id: PROJECT_ID },
+        relations: {},
       });
     });
 
@@ -94,6 +95,29 @@ describe('ProjectsService', () => {
       await expect(service.findOne(MISSING_PROJECT_ID)).rejects.toThrow(
         MISSING_PROJECT_ID,
       );
+    });
+  });
+
+  describe('findOneWithActivities', () => {
+    it('carga las actividades en la misma consulta', async () => {
+      const project = buildProject();
+      repository.findOne.mockResolvedValue(project);
+
+      await expect(service.findOneWithActivities(PROJECT_ID)).resolves.toBe(
+        project,
+      );
+      expect(repository.findOne).toHaveBeenCalledWith({
+        where: { id: PROJECT_ID },
+        relations: { activities: true },
+      });
+    });
+
+    it('lanza NotFoundException cuando el proyecto no existe', async () => {
+      repository.findOne.mockResolvedValue(null);
+
+      await expect(
+        service.findOneWithActivities(MISSING_PROJECT_ID),
+      ).rejects.toThrow(NotFoundException);
     });
   });
 
