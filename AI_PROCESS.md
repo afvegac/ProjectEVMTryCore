@@ -318,6 +318,24 @@ Un `N/A` sin explicación deja al usuario sin diagnóstico y sin saber si debe a
 datos por cargar. Con la razón explícita, el semáforo queda en gris y el motivo es evidente. El costo es un
 campo adicional en el contrato; el beneficio es que la interfaz informa en lugar de callar.
 
+### Una decisión que hubo que revertir: la versión de TypeORM
+
+Al montar la persistencia se fijó deliberadamente la línea **0.3** en lugar de la **1.x**, con el argumento
+de que no compensa estrenar un *major* publicado pocas semanas antes. El razonamiento era razonable, pero
+resultó equivocado: `npm audit` reveló que la 0.3 arrastra cuatro avisos de severidad alta en dependencias
+**de producción** (`glob` → `minimatch` → `brace-expansion`) que la 1.x ya no tiene. Se subió a la 1.x y la
+suite completa pasó sin un solo cambio de código.
+
+Antes de eso se intentó una corrección equivocada: forzar `brace-expansion` a la versión parcheada mediante
+`overrides`. Rompió ESLint con `TypeError: expand is not a function`, porque la versión 5 cambió la forma de
+exportación y `minimatch@3` la consume esperando una función. Es decir, el «arreglo» era un cambio de
+ruptura disfrazado. Se revirtió, y la corrección quedó acotada al único caso donde sí era segura
+(`js-yaml` bajo `@nestjs/swagger`).
+
+**Resultado: cero vulnerabilidades en dependencias de producción.** Las que quedan viven exclusivamente en
+herramientas de desarrollo —ESLint, Jest, el CLI de Nest— y no se despliegan; corregirlas exigiría degradar
+esas herramientas a versiones mayores anteriores, que es peor que el problema.
+
 ### Decisión 3 — Rechazar la reorganización de la tabla en fichas
 
 **Qué propuso la IA:** ante la petición de eliminar el desplazamiento horizontal, argumentó que catorce
@@ -402,6 +420,15 @@ sembrado devuelve exactamente la tabla calculada a mano, atravesando HTTP, servi
 dominio. El consolidado sale `CPI 0,9524`, `SPI 0,5714`, `EAC 52.500` y `VAC −2.500`, y la actividad sin
 iniciar publica `costPerformanceIndex: null` con razón `NOT_STARTED` en lugar de un cero engañoso.
 
+**Capa 6 — Una prueba que dependía de datos que cualquiera puede cambiar.** Al documentar la API, la suite
+de integración empezó a fallar: el consolidado daba 350.000 en lugar de 50.000. No era un defecto del
+código: alguien había agregado una actividad al proyecto de ejemplo **desde el propio dashboard**.
+
+El defecto real estaba en las pruebas, que afirmaban contra los datos sembrados dando por supuesto que
+seguirían intactos. Un evaluador que probara la interfaz antes de ejecutar los tests los habría visto
+fallar sin motivo. Ahora cada prueba de integración **construye su propio proyecto** con las actividades del
+caso de referencia y lo elimina al terminar; los datos sembrados quedan solo para la demostración.
+
 **Un error propio que las pruebas atraparon.** Al escribir el redondeo se afirmó que `−4.000,005` debía
 quedar en `−4.000,01`. Es falso: `Math.round` de JavaScript resuelve los empates hacia +∞, de modo que
 `−0,5` va a `−0` y no a `−1`. La expectativa estaba mal, no el código. Se corrigió la prueba y se documentó
@@ -463,5 +490,5 @@ EVM y la demostración numérica está en la sección 5.
 | `feature/activity-crud` | Integrada vía PR #5 |
 | `feature/evm-api-endpoint` | Integrada vía PR #6 |
 | `feature/angular-dashboard` | Integrada vía PR #7 |
-| `feature/openapi-documentation` | Pendiente |
+| `feature/openapi-documentation` | En curso |
 | `feature/documentation` | Pendiente |

@@ -31,7 +31,7 @@ estándar PMI completo:
 | Backend | **NestJS + TypeScript** | Su arquitectura de módulos e inyección de dependencias impone por diseño la separación controlador / servicio / dominio que el proyecto exige. |
 | Frontend | **Angular** | Comparte TypeScript, decoradores, DI y módulos con NestJS: un solo modelo mental de punta a punta. |
 | Base de datos | **PostgreSQL 16** vía docker-compose | Un solo comando levanta la base con esquema y datos de ejemplo aplicados. |
-| ORM | **TypeORM 0.3** | Integración oficial con Nest. Se fija la línea 0.3 en lugar de la 1.x, publicada pocas semanas antes: no compensa estrenar un *major* reciente. |
+| ORM | **TypeORM 1.x** | Integración oficial con Nest. Se eligió primero la línea 0.3 por prudencia ante un *major* recién publicado, y se cambió al comprobar que la 0.3 arrastra cuatro avisos de seguridad de severidad alta en dependencias de producción (`glob` → `minimatch` → `brace-expansion`) que la 1.x ya no tiene. |
 | Pruebas | **Jest + Supertest** | El umbral de cobertura se declara en `package.json`, de modo que el 80 % es verificable y no una afirmación. |
 | Documentación API | **@nestjs/swagger** | Genera OpenAPI desde los propios DTOs. |
 | Linter | **ESLint + Prettier** | Configuración versionada en el repositorio, en backend y frontend. |
