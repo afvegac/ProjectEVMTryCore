@@ -1,0 +1,93 @@
+<section class="summary" aria-label="Indicadores consolidados del proyecto">
+  <div class="headline">
+    <article class="tile tile--headline">
+      <h3 class="tile__label">CPI — Eficiencia en costo</h3>
+      <p class="tile__value">
+        @if (summary().costPerformanceIndex !== null) {
+          {{ summary().costPerformanceIndex | number: '1.4-4' }}
+        } @else {
+          <span class="tile__value--absent">N/D</span>
+        }
+      </p>
+      <app-status-badge
+        kind="cost"
+        [status]="summary().costStatus"
+        [reason]="summary().costStatusReason"
+      />
+    </article>
+
+    <article class="tile tile--headline">
+      <h3 class="tile__label">SPI — Eficiencia en cronograma</h3>
+      <p class="tile__value">
+        @if (summary().schedulePerformanceIndex !== null) {
+          {{ summary().schedulePerformanceIndex | number: '1.4-4' }}
+        } @else {
+          <span class="tile__value--absent">N/D</span>
+        }
+      </p>
+      <app-status-badge
+        kind="schedule"
+        [status]="summary().scheduleStatus"
+        [reason]="summary().scheduleStatusReason"
+      />
+    </article>
+  </div>
+
+  <div class="grid">
+    <article class="tile">
+      <h3 class="tile__label">BAC — Presupuesto total</h3>
+      <p class="tile__figure">{{ summary().budgetAtCompletion | number: '1.2-2' }}</p>
+    </article>
+
+    <article class="tile">
+      <h3 class="tile__label">PV — Valor planificado</h3>
+      <p class="tile__figure">{{ summary().plannedValue | number: '1.2-2' }}</p>
+    </article>
+
+    <article class="tile">
+      <h3 class="tile__label">EV — Valor ganado</h3>
+      <p class="tile__figure">{{ summary().earnedValue | number: '1.2-2' }}</p>
+    </article>
+
+    <article class="tile">
+      <h3 class="tile__label">AC — Costo real</h3>
+      <p class="tile__figure">{{ summary().actualCost | number: '1.2-2' }}</p>
+    </article>
+
+    <article class="tile">
+      <h3 class="tile__label">CV — Desviación en costo</h3>
+      <p class="tile__figure" [class.tile__figure--negative]="summary().costVariance < 0">
+        {{ summary().costVariance | number: '1.2-2' }}
+      </p>
+    </article>
+
+    <article class="tile">
+      <h3 class="tile__label">SV — Desviación en cronograma</h3>
+      <p class="tile__figure" [class.tile__figure--negative]="summary().scheduleVariance < 0">
+        {{ summary().scheduleVariance | number: '1.2-2' }}
+      </p>
+    </article>
+
+    <article class="tile">
+      <h3 class="tile__label">EAC — Costo final estimado</h3>
+      <p class="tile__figure">
+        @if (summary().estimateAtCompletion !== null) {
+          {{ summary().estimateAtCompletion | number: '1.2-2' }}
+        } @else {
+          <span class="tile__value--absent">N/D</span>
+        }
+      </p>
+    </article>
+
+    <article class="tile">
+      <h3 class="tile__label">VAC — Desviación al cierre</h3>
+      <p class="tile__figure" [class.tile__figure--negative]="(summary().varianceAtCompletion ?? 0) < 0">
+        @if (summary().varianceAtCompletion !== null) {
+          {{ summary().varianceAtCompletion | number: '1.2-2' }}
+        } @else {
+          <span class="tile__value--absent">N/D</span>
+        }
+      </p>
+    </article>
+  </div>
+</section>
