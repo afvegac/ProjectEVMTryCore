@@ -9,9 +9,38 @@ import { ProjectEvmAnalysisResponse } from './../src/evm/dto/project-evm-analysi
 import { createTestApp } from './test-app';
 
 const PROJECTS_PATH = '/api/projects';
-/** Proyecto de referencia sembrado por db/init/02-seed.sql. */
-const SEEDED_PROJECT_ID = '11111111-1111-4111-8111-111111111111';
 const UNKNOWN_PROJECT_ID = '99999999-9999-4999-8999-999999999999';
+
+/**
+ * Las tres actividades del caso de referencia, calculado a mano antes de implementar el motor.
+ *
+ * La prueba construye su propio proyecto en lugar de apoyarse en el que siembra `02-seed.sql`: los
+ * datos de ejemplo existen para la demostración y cualquiera puede modificarlos desde el dashboard,
+ * de modo que depender de ellos haría fallar la suite por un motivo ajeno al código.
+ */
+const REFERENCE_ACTIVITIES = [
+  {
+    name: 'Diseño de arquitectura',
+    budgetAtCompletion: 10_000,
+    plannedProgressPercent: 100,
+    actualProgressPercent: 100,
+    actualCost: 9_000,
+  },
+  {
+    name: 'Desarrollo del backend',
+    budgetAtCompletion: 20_000,
+    plannedProgressPercent: 75,
+    actualProgressPercent: 50,
+    actualCost: 12_000,
+  },
+  {
+    name: 'Pruebas de integración',
+    budgetAtCompletion: 20_000,
+    plannedProgressPercent: 50,
+    actualProgressPercent: 0,
+    actualCost: 0,
+  },
+];
 
 /**
  * Verificación de extremo a extremo del caso de referencia.
@@ -22,6 +51,7 @@ const UNKNOWN_PROJECT_ID = '99999999-9999-4999-8999-999999999999';
  */
 describe('EVM analysis (e2e)', () => {
   let app: INestApplication;
+  let projectId: string;
   let analysis: ProjectEvmAnalysisResponse;
 
   const server = (): unknown => app.getHttpServer();
@@ -29,14 +59,30 @@ describe('EVM analysis (e2e)', () => {
   beforeAll(async () => {
     app = await createTestApp();
 
+    const project = await request(server())
+      .post(PROJECTS_PATH)
+      .send({ name: 'Caso de referencia EVM' })
+      .expect(201);
+
+    projectId = (project.body as { id: string }).id;
+
+    // En serie y no en paralelo: el orden de creación es el que determina el de la respuesta.
+    for (const activity of REFERENCE_ACTIVITIES) {
+      await request(server())
+        .post(`${PROJECTS_PATH}/${projectId}/activities`)
+        .send(activity)
+        .expect(201);
+    }
+
     const response = await request(server())
-      .get(`${PROJECTS_PATH}/${SEEDED_PROJECT_ID}/evm`)
+      .get(`${PROJECTS_PATH}/${projectId}/evm`)
       .expect(200);
 
     analysis = response.body as ProjectEvmAnalysisResponse;
   });
 
   afterAll(async () => {
+    await request(server()).delete(`${PROJECTS_PATH}/${projectId}`);
     await app?.close();
   });
 
@@ -169,10 +215,10 @@ describe('EVM analysis (e2e)', () => {
         .send({ name: 'Proyecto sin actividades' })
         .expect(201);
 
-      const projectId = (created.body as { id: string }).id;
+      const emptyProjectId = (created.body as { id: string }).id;
 
       const response = await request(server())
-        .get(`${PROJECTS_PATH}/${projectId}/evm`)
+        .get(`${PROJECTS_PATH}/${emptyProjectId}/evm`)
         .expect(200);
 
       const empty = response.body as ProjectEvmAnalysisResponse;
@@ -184,7 +230,7 @@ describe('EVM analysis (e2e)', () => {
         UnavailableReason.NoActivities,
       );
 
-      await request(server()).delete(`${PROJECTS_PATH}/${projectId}`);
+      await request(server()).delete(`${PROJECTS_PATH}/${emptyProjectId}`);
     });
   });
 });

@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import {
   roundMonetary,
   roundOptionalIndex,
@@ -10,6 +11,13 @@ import {
   UnavailableReason,
 } from '../domain/evm-status.enum';
 
+const NULLABLE_INDEX = {
+  type: Number,
+  nullable: true,
+  description:
+    'Nulo cuando el indicador es indeterminado; el motivo se informa aparte. Nunca se devuelve cero en su lugar.',
+};
+
 /**
  * Indicadores de Valor Ganado tal y como los publica la API.
  *
@@ -17,34 +25,103 @@ import {
  * esta capa presenta importes con dos decimales e índices con cuatro.
  */
 export class EvmIndicatorsResponse {
-  /** BAC — presupuesto total planificado. */
+  @ApiProperty({
+    example: 50000,
+    description: 'BAC — presupuesto total planificado.',
+  })
   budgetAtCompletion: number;
-  /** PV — valor planificado a la fecha de corte. */
+
+  @ApiProperty({
+    example: 35000,
+    description:
+      'PV — valor planificado a la fecha de corte: % planificado × BAC.',
+  })
   plannedValue: number;
-  /** EV — valor ganado. */
+
+  @ApiProperty({
+    example: 20000,
+    description:
+      'EV — valor ganado: % real × BAC. Se valoriza con el presupuesto, nunca con el costo.',
+  })
   earnedValue: number;
-  /** AC — costo real incurrido. */
+
+  @ApiProperty({ example: 21000, description: 'AC — costo real incurrido.' })
   actualCost: number;
 
-  /** CV = EV − AC. Negativo indica sobrecosto. */
+  @ApiProperty({
+    example: -1000,
+    description: 'CV = EV − AC. Negativo indica sobrecosto.',
+  })
   costVariance: number;
-  /** SV = EV − PV. Negativo indica atraso. */
+
+  @ApiProperty({
+    example: -15000,
+    description: 'SV = EV − PV. Negativo indica atraso.',
+  })
   scheduleVariance: number;
 
-  /** CPI = EV / AC. Nulo cuando no se puede calcular; la razón se indica aparte. */
+  @ApiProperty({
+    ...NULLABLE_INDEX,
+    example: 0.9524,
+    description: 'CPI = EV / AC.',
+  })
   costPerformanceIndex: number | null;
-  /** SPI = EV / PV. Nulo cuando no se puede calcular; la razón se indica aparte. */
+
+  @ApiProperty({
+    ...NULLABLE_INDEX,
+    example: 0.5714,
+    description: 'SPI = EV / PV.',
+  })
   schedulePerformanceIndex: number | null;
-  /** EAC = BAC / CPI. */
+
+  @ApiProperty({
+    ...NULLABLE_INDEX,
+    example: 52500,
+    description: 'EAC = BAC / CPI. Se deriva del CPI sin redondear.',
+  })
   estimateAtCompletion: number | null;
-  /** VAC = BAC − EAC. */
+
+  @ApiProperty({
+    ...NULLABLE_INDEX,
+    example: -2500,
+    description: 'VAC = BAC − EAC.',
+  })
   varianceAtCompletion: number | null;
 
+  @ApiProperty({
+    enum: CostStatus,
+    description:
+      'Interpretación del CPI: mayor que 1 es eficiencia en costo, menor que 1 es sobrecosto.',
+  })
   costStatus: CostStatus;
+
+  @ApiProperty({
+    enum: UnavailableReason,
+    nullable: true,
+    description: 'Motivo por el que el CPI no se pudo calcular.',
+  })
   costStatusReason: UnavailableReason | null;
+
+  @ApiProperty({
+    enum: ScheduleStatus,
+    description:
+      'Interpretación del SPI, con la misma lógica sobre el cronograma.',
+  })
   scheduleStatus: ScheduleStatus;
+
+  @ApiProperty({
+    enum: UnavailableReason,
+    nullable: true,
+    description: 'Motivo por el que el SPI no se pudo calcular.',
+  })
   scheduleStatusReason: UnavailableReason | null;
-  /** Motivo por el que no hay pronóstico. Aplica tanto al EAC como al VAC. */
+
+  @ApiProperty({
+    enum: UnavailableReason,
+    nullable: true,
+    description:
+      'Motivo por el que no hay pronóstico. Aplica tanto al EAC como al VAC.',
+  })
   forecastReason: UnavailableReason | null;
 
   static fromIndicators(indicators: EvmIndicators): EvmIndicatorsResponse {
