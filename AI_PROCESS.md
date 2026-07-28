@@ -179,6 +179,14 @@ inexistente e identificador que no es UUID), que devuelven el mismo esquema con 
 
 **Respuesta de la IA:** integró el PR #4 y continuó con `feature/activity-crud`.
 
+### Prompt 17
+
+> si, dale con el endpoint EVM
+
+**Respuesta de la IA:** integró el PR #5 y construyó `feature/evm-api-endpoint`: el redondeo de
+presentación, el adaptador entre persistencia y dominio, y `GET /api/projects/:projectId/evm`. Verificó la
+salida contra el caso de referencia a través de toda la pila.
+
 ---
 
 ## 3. Cómo aprendí EVM y cómo validé las fórmulas
@@ -333,6 +341,17 @@ lugar de sumar**, produciendo `"010000.0020000.0020000.00"` en vez de `50000` �
 La prueba de integración no comprueba el tipo de un campo suelto, sino que **suma los tres presupuestos
 sembrados y exige 50.000**, que es exactamente la forma en que el defecto se manifestaría.
 
+**Capa 5 — Verificación de extremo a extremo.** `GET /api/projects/:projectId/evm` sobre el proyecto
+sembrado devuelve exactamente la tabla calculada a mano, atravesando HTTP, servicio, ORM, PostgreSQL y
+dominio. El consolidado sale `CPI 0,9524`, `SPI 0,5714`, `EAC 52.500` y `VAC −2.500`, y la actividad sin
+iniciar publica `costPerformanceIndex: null` con razón `NOT_STARTED` en lugar de un cero engañoso.
+
+**Un error propio que las pruebas atraparon.** Al escribir el redondeo se afirmó que `−4.000,005` debía
+quedar en `−4.000,01`. Es falso: `Math.round` de JavaScript resuelve los empates hacia +∞, de modo que
+`−0,5` va a `−0` y no a `−1`. La expectativa estaba mal, no el código. Se corrigió la prueba y se documentó
+el comportamiento, evitando fijar como contrato un caso que además no es alcanzable aquí —los importes
+provienen de divisiones y nunca caen exactamente en la mitad—.
+
 > ✍️ **Pendiente de completar por el candidato:** una vez el API esté corriendo, compara la salida de
 > `GET /api/projects/:id/evm` contra la tabla de la sección 3, dígito a dígito, y deja constancia aquí del
 > resultado.
@@ -385,4 +404,5 @@ EVM y la demostración numérica está en la sección 5.
 | `feature/evm-calculation-engine` | Integrada vía PR #2 |
 | `feature/database-schema` | Integrada vía PR #3 |
 | `feature/project-crud` | Integrada vía PR #4 |
-| `feature/activity-crud` | En curso |
+| `feature/activity-crud` | Integrada vía PR #5 |
+| `feature/evm-api-endpoint` | En curso |
