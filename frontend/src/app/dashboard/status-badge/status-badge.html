@@ -1,0 +1,8 @@
+<span class="badge" [class]="'badge--' + presentation().tone" [title]="reasonLabel() ?? ''">
+  <span class="badge__symbol" aria-hidden="true">{{ presentation().symbol }}</span>
+  <span class="badge__label">{{ presentation().label }}</span>
+</span>
+
+@if (inlineReason(); as reason) {
+  <span class="reason">{{ reason }}</span>
+}

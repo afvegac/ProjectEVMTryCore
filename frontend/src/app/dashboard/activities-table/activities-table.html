@@ -1,0 +1,110 @@
+<section class="panel">
+  <h2 class="panel__title">Actividades</h2>
+
+  @if (activities().length === 0) {
+    <p class="empty">
+      Este proyecto todavía no tiene actividades. Agrega la primera para empezar a medir el avance.
+    </p>
+  } @else {
+    <div class="panel__scroll">
+      <table>
+        <thead>
+          <tr>
+            <th scope="col" class="col-name">Actividad</th>
+            <th scope="col" class="col-number">% plan</th>
+            <th scope="col" class="col-number">% real</th>
+            <th scope="col" class="col-number">BAC</th>
+            <th scope="col" class="col-number">PV</th>
+            <th scope="col" class="col-number">EV</th>
+            <th scope="col" class="col-number">AC</th>
+            <th scope="col" class="col-number">CV</th>
+            <th scope="col" class="col-number">SV</th>
+            <th scope="col" class="col-indicator">CPI</th>
+            <th scope="col" class="col-indicator">SPI</th>
+            <th scope="col" class="col-number">EAC</th>
+            <th scope="col" class="col-number">VAC</th>
+            <th scope="col"><span class="visually-hidden">Acciones</span></th>
+          </tr>
+        </thead>
+
+        <tbody>
+          @for (activity of activities(); track activity.id) {
+            <tr>
+              <th scope="row" class="col-name">{{ activity.name }}</th>
+              <td class="col-number">{{ activity.plannedProgressPercent | number: '1.0-2' }} %</td>
+              <td class="col-number">{{ activity.actualProgressPercent | number: '1.0-2' }} %</td>
+              <td class="col-number">{{ activity.indicators.budgetAtCompletion | number: '1.2-2' }}</td>
+              <td class="col-number">{{ activity.indicators.plannedValue | number: '1.2-2' }}</td>
+              <td class="col-number">{{ activity.indicators.earnedValue | number: '1.2-2' }}</td>
+              <td class="col-number">{{ activity.indicators.actualCost | number: '1.2-2' }}</td>
+              <td class="col-number" [class.negative]="activity.indicators.costVariance < 0">
+                {{ activity.indicators.costVariance | number: '1.2-2' }}
+              </td>
+              <td class="col-number" [class.negative]="activity.indicators.scheduleVariance < 0">
+                {{ activity.indicators.scheduleVariance | number: '1.2-2' }}
+              </td>
+
+              <!-- El estado acompaña al índice del que se deriva, en lugar de ocupar su propia columna. -->
+              <td class="col-indicator">
+                <span class="indicator__value">
+                  @if (activity.indicators.costPerformanceIndex !== null) {
+                    {{ activity.indicators.costPerformanceIndex | number: '1.4-4' }}
+                  } @else {
+                    <span class="absent">N/D</span>
+                  }
+                </span>
+                <app-status-badge
+                  kind="cost"
+                  compact
+                  [status]="activity.indicators.costStatus"
+                  [reason]="activity.indicators.costStatusReason"
+                />
+              </td>
+
+              <td class="col-indicator">
+                <span class="indicator__value">
+                  @if (activity.indicators.schedulePerformanceIndex !== null) {
+                    {{ activity.indicators.schedulePerformanceIndex | number: '1.4-4' }}
+                  } @else {
+                    <span class="absent">N/D</span>
+                  }
+                </span>
+                <app-status-badge
+                  kind="schedule"
+                  compact
+                  [status]="activity.indicators.scheduleStatus"
+                  [reason]="activity.indicators.scheduleStatusReason"
+                />
+              </td>
+
+              <td class="col-number">
+                @if (activity.indicators.estimateAtCompletion !== null) {
+                  {{ activity.indicators.estimateAtCompletion | number: '1.2-2' }}
+                } @else {
+                  <span class="absent">N/D</span>
+                }
+              </td>
+              <td
+                class="col-number"
+                [class.negative]="(activity.indicators.varianceAtCompletion ?? 0) < 0"
+              >
+                @if (activity.indicators.varianceAtCompletion !== null) {
+                  {{ activity.indicators.varianceAtCompletion | number: '1.2-2' }}
+                } @else {
+                  <span class="absent">N/D</span>
+                }
+              </td>
+
+              <td class="col-actions">
+                <button type="button" (click)="edit.emit(activity.id)">Editar</button>
+                <button type="button" class="danger" (click)="remove.emit(activity.id)">
+                  Eliminar
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>

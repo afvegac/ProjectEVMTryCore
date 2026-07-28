@@ -187,6 +187,48 @@ inexistente e identificador que no es UUID), que devuelven el mismo esquema con 
 presentación, el adaptador entre persistencia y dominio, y `GET /api/projects/:projectId/evm`. Verificó la
 salida contra el caso de referencia a través de toda la pila.
 
+### Prompt 18
+
+> lo veo bien y sin errores de compilación, sube y continuemos con al front
+
+**Respuesta de la IA:** integró el PR #6 y construyó el dashboard en Angular. Antes de escribir la gráfica
+cargó una guía de visualización de datos y **validó la paleta con su script** en lugar de elegir colores a
+ojo. Advirtió que no dispone de navegador para comprobar el resultado renderizado.
+
+### Prompt 19
+
+> El dashboard esta ocupando mas de la pantalla, ajustalo para que se acople a la panatlla
+
+**Respuesta de la IA:** diagnosticó la causa —los hijos de una rejilla CSS arrancan con `min-width: auto`,
+así que la tabla ancha imponía su ancho mínimo y empujaba el documento entero— y la corrigió con
+`min-width: 0`, además de sanear el `overflow` del SVG y la posición del tooltip.
+
+### Prompt 20
+
+> la pantalla aun queda muy grande y se ven barras y scrolls innecesarios
+
+**Respuesta de la IA:** redujo el alto de la página: el motivo de cada indicador pasó a tooltip dentro de la
+tabla, los dos estados se plegaron en las celdas de CPI y SPI, y la gráfica se hizo más apaisada con tope de
+alto.
+
+### Prompt 21
+
+> solo elimina el scroll horizontal
+
+**Respuesta de la IA:** reorganizó la tabla en fichas apiladas por debajo de 1200 px para eliminar todo
+desplazamiento horizontal.
+
+### Prompt 22
+
+> No me gusta, el scroll de las actividades si estaba bien, el que estaba mal era el scroll de la pagina completa.
+
+**Respuesta de la IA:** revirtió la reorganización en fichas, devolvió a la tabla su desplazamiento propio y
+conservó solo las correcciones que afectaban al desplazamiento de la página.
+
+### Prompt 23
+
+> Bien, verificado y aprobado
+
 ---
 
 ## 3. Cómo aprendí EVM y cómo validé las fórmulas
@@ -276,7 +318,21 @@ Un `N/A` sin explicación deja al usuario sin diagnóstico y sin saber si debe a
 datos por cargar. Con la razón explícita, el semáforo queda en gris y el motivo es evidente. El costo es un
 campo adicional en el contrato; el beneficio es que la interfaz informa en lugar de callar.
 
-> ✍️ **Pendiente de completar por el candidato:** revisa que estas dos decisiones estén redactadas como las
+### Decisión 3 — Rechazar la reorganización de la tabla en fichas
+
+**Qué propuso la IA:** ante la petición de eliminar el desplazamiento horizontal, argumentó que catorce
+columnas de cifras no rompibles no caben en cualquier pantalla y reorganizó la tabla en fichas apiladas por
+debajo de 1200 px.
+
+**Qué hice:** lo rechacé. El desplazamiento de la tabla nunca fue el problema; el que sobraba era el de la
+página completa.
+
+**Por qué:** una tabla ancha con su propio desplazamiento es la solución correcta para trece indicadores —
+permite comparar filas alineadas, que es justamente para lo que sirve. Convertirla en fichas destruye esa
+comparación para resolver un problema que no existía. La IA tomó la petición al pie de la letra en lugar de
+preguntar cuál de los dos desplazamientos molestaba.
+
+> ✍️ **Pendiente de completar por el candidato:** revisa que estas decisiones estén redactadas como las
 > viviste y ajusta el razonamiento a tus palabras. Si surgen más desacuerdos durante el desarrollo, agrégalos
 > aquí en el momento en que ocurran.
 
@@ -405,4 +461,7 @@ EVM y la demostración numérica está en la sección 5.
 | `feature/database-schema` | Integrada vía PR #3 |
 | `feature/project-crud` | Integrada vía PR #4 |
 | `feature/activity-crud` | Integrada vía PR #5 |
-| `feature/evm-api-endpoint` | En curso |
+| `feature/evm-api-endpoint` | Integrada vía PR #6 |
+| `feature/angular-dashboard` | Integrada vía PR #7 |
+| `feature/openapi-documentation` | Pendiente |
+| `feature/documentation` | Pendiente |

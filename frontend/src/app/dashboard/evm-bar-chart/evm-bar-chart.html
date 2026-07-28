@@ -1,0 +1,78 @@
+<figure class="chart">
+  <figcaption class="chart__header">
+    <h2 class="chart__title">Valor planificado, ganado y costo real por actividad</h2>
+
+    <ul class="legend">
+      @for (item of series; track item.shortLabel) {
+        <li class="legend__item">
+          <span class="legend__swatch" [style.background]="item.color" aria-hidden="true"></span>
+          {{ item.label }}
+        </li>
+      }
+    </ul>
+  </figcaption>
+
+  <div class="chart__plot">
+    <svg [attr.viewBox]="viewBox" role="img" aria-label="Barras agrupadas de PV, EV y AC por actividad">
+      @for (line of gridLines(); track line.y) {
+        <line
+          class="grid"
+          [attr.x1]="plotLeft"
+          [attr.x2]="plotRight"
+          [attr.y1]="line.y"
+          [attr.y2]="line.y"
+        />
+        <text class="axis-label axis-label--y" [attr.x]="plotLeft - 12" [attr.y]="line.y + 4">
+          {{ line.value | number: '1.0-0' }}
+        </text>
+      }
+
+      <line
+        class="baseline"
+        [attr.x1]="plotLeft"
+        [attr.x2]="plotRight"
+        [attr.y1]="plotBottom"
+        [attr.y2]="plotBottom"
+      />
+
+      @for (group of groups(); track group.name; let index = $index) {
+        @for (bar of group.bars; track $index) {
+          @if (bar.path) {
+            <path [attr.d]="bar.path" [style.fill]="bar.color" />
+          }
+        }
+
+        <text class="axis-label axis-label--x" [attr.x]="group.centerX" [attr.y]="labelY">
+          {{ group.truncatedName }}
+          <title>{{ group.name }}</title>
+        </text>
+
+        <!-- Zona sensible del ancho completo del grupo: el objetivo de puntero no es la barra. -->
+        <rect
+          class="hit-area"
+          [attr.x]="group.hitX"
+          [attr.y]="plotTop"
+          [attr.width]="group.hitWidth"
+          [attr.height]="plotBottom - plotTop"
+          (mouseenter)="show(index)"
+          (mouseleave)="hide()"
+        />
+      }
+    </svg>
+
+    @if (hoveredGroup(); as group) {
+      <div class="tooltip" [style.left.%]="tooltipLeftPercent()">
+        <p class="tooltip__title">{{ group.name }}</p>
+        <ul class="tooltip__list">
+          @for (entry of group.entries; track entry.label) {
+            <li class="tooltip__row">
+              <span class="tooltip__swatch" [style.background]="entry.color" aria-hidden="true"></span>
+              <span class="tooltip__label">{{ entry.label }}</span>
+              <span class="tooltip__value">{{ entry.value | number: '1.2-2' }}</span>
+            </li>
+          }
+        </ul>
+      </div>
+    }
+  </div>
+</figure>

@@ -1,0 +1,71 @@
+<section class="panel">
+  <h2 class="panel__title">
+    {{ activity() === null ? 'Nueva actividad' : 'Editar actividad' }}
+  </h2>
+
+  <form [formGroup]="form" (ngSubmit)="submit()">
+    <div class="field field--wide">
+      <label for="name">Nombre</label>
+      <input id="name" type="text" formControlName="name" autocomplete="off" />
+      @if (form.controls.name.touched && form.controls.name.invalid) {
+        <p class="error">Escribe un nombre para la actividad.</p>
+      }
+    </div>
+
+    <div class="field">
+      <label for="budgetAtCompletion">BAC — Presupuesto total</label>
+      <input id="budgetAtCompletion" type="number" step="0.01" min="0.01" formControlName="budgetAtCompletion" />
+      @if (form.controls.budgetAtCompletion.touched && form.controls.budgetAtCompletion.invalid) {
+        <p class="error">El presupuesto debe ser mayor que cero.</p>
+      }
+    </div>
+
+    <div class="field">
+      <label for="plannedProgressPercent">% avance planificado</label>
+      <input
+        id="plannedProgressPercent"
+        type="number"
+        step="0.01"
+        [min]="minProgressPercent"
+        [max]="maxProgressPercent"
+        formControlName="plannedProgressPercent"
+      />
+      @if (form.controls.plannedProgressPercent.touched && form.controls.plannedProgressPercent.invalid) {
+        <p class="error">Debe estar entre 0 y 100.</p>
+      }
+    </div>
+
+    <div class="field">
+      <label for="actualProgressPercent">% avance real</label>
+      <input
+        id="actualProgressPercent"
+        type="number"
+        step="0.01"
+        [min]="minProgressPercent"
+        [max]="maxProgressPercent"
+        formControlName="actualProgressPercent"
+      />
+      @if (form.controls.actualProgressPercent.touched && form.controls.actualProgressPercent.invalid) {
+        <p class="error">Debe estar entre 0 y 100.</p>
+      }
+    </div>
+
+    <div class="field">
+      <label for="actualCost">AC — Costo real incurrido</label>
+      <input id="actualCost" type="number" step="0.01" min="0" formControlName="actualCost" />
+      @if (form.controls.actualCost.touched && form.controls.actualCost.invalid) {
+        <p class="error">El costo no puede ser negativo.</p>
+      }
+    </div>
+
+    <div class="actions">
+      <button type="submit" class="primary" [disabled]="saving()">
+        {{ activity() === null ? 'Agregar actividad' : 'Guardar cambios' }}
+      </button>
+
+      @if (activity() !== null) {
+        <button type="button" (click)="cancelEdit.emit()">Cancelar</button>
+      }
+    </div>
+  </form>
+</section>

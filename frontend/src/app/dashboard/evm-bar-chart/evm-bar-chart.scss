@@ -1,0 +1,141 @@
+.chart {
+  min-width: 0;
+  max-width: 100%;
+  margin: 0;
+  padding: 20px;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.chart__header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 24px;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.chart__title {
+  margin: 0;
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.legend__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+}
+
+.legend__swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+}
+
+.chart__plot {
+  position: relative;
+  min-width: 0;
+}
+
+svg {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  /* Tope de alto para que en pantallas anchas la gráfica no se coma la mitad de la página. */
+  max-height: 20rem;
+}
+
+.grid {
+  stroke: var(--gridline);
+  stroke-width: 1;
+}
+
+.baseline {
+  stroke: var(--baseline);
+  stroke-width: 1;
+}
+
+.axis-label {
+  fill: var(--text-muted);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.axis-label--y {
+  text-anchor: end;
+}
+
+.axis-label--x {
+  text-anchor: middle;
+  font-variant-numeric: normal;
+}
+
+.hit-area {
+  fill: transparent;
+}
+
+.tooltip {
+  position: absolute;
+  top: 8px;
+  transform: translateX(-50%);
+  min-width: 10rem;
+  max-width: min(14rem, 100%);
+  padding: 10px 12px;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgb(0 0 0 / 12%);
+  pointer-events: none;
+}
+
+.tooltip__title {
+  margin: 0 0 8px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.tooltip__list {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tooltip__row {
+  display: grid;
+  grid-template-columns: 10px 2rem 1fr;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8125rem;
+}
+
+.tooltip__swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+}
+
+.tooltip__label {
+  color: var(--text-secondary);
+}
+
+.tooltip__value {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}

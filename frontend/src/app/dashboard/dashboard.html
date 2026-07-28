@@ -1,0 +1,45 @@
+<header class="header">
+  <div>
+    <h1 class="header__title">Valor Ganado</h1>
+    <p class="header__subtitle">Estado de cronograma y presupuesto del proyecto</p>
+  </div>
+
+  @if (projects().length > 0) {
+    <div class="header__picker">
+      <label for="project">Proyecto</label>
+      <select id="project" [value]="selectedProjectId() ?? ''" (change)="onProjectChange($event)">
+        @for (project of projects(); track project.id) {
+          <option [value]="project.id">{{ project.name }}</option>
+        }
+      </select>
+    </div>
+  }
+</header>
+
+@if (errorMessage(); as message) {
+  <p class="banner" role="alert">{{ message }}</p>
+}
+
+@if (analysis(); as current) {
+  <!-- Durante una recarga se mantiene el contenido anterior atenuado, sin saltos de maquetación. -->
+  <main class="layout" [class.layout--busy]="loading()">
+    <app-summary-cards [summary]="current.summary" />
+
+    <app-evm-bar-chart [activities]="current.activities" />
+
+    <app-activities-table
+      [activities]="current.activities"
+      (edit)="startEditing($event)"
+      (remove)="deleteActivity($event)"
+    />
+
+    <app-activity-form
+      [activity]="editingActivity()"
+      [saving]="saving()"
+      (save)="saveActivity($event)"
+      (cancelEdit)="cancelEditing()"
+    />
+  </main>
+} @else if (!errorMessage()) {
+  <p class="placeholder">Cargando el análisis…</p>
+}
