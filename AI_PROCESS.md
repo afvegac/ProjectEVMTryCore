@@ -99,6 +99,16 @@ accesibles, a cargar en la rama del dashboard.
 **Respuesta de la IA:** acotó la regla del Prompt 3: la IA maneja ramas, merges, push y PRs de forma
 autónoma; solo los commits requieren autorización y revisión.
 
+### Prompt 8
+
+> dale, aprueba el commit sin las dos ultimas lineas
+
+**Contexto:** la IA propuso el mensaje del primer commit incluyendo las líneas de atribución
+`Co-Authored-By: Claude Opus 5` y `Claude-Session`. Se aprobó el commit sin ellas.
+
+**Respuesta de la IA:** ejecutó el commit `9ddaa56` con 37 archivos, publicó `develop` y
+`feature/project-setup`, y abrió el Pull Request #1 hacia `develop`.
+
 ---
 
 ## 3. Cómo aprendí EVM y cómo validé las fórmulas
@@ -208,7 +218,20 @@ bug aunque los tests de caso nominal pasen:
 1. `signo(CV)` coincide con la posición de CPI respecto a 1 (y `signo(SV)` con SPI).
 2. Al 100 % de avance, `EAC = AC`.
 3. `ΣPV`, `ΣEV`, `ΣAC` y `ΣBAC` del proyecto son la suma exacta de sus actividades.
-4. `VAC` tiene signo opuesto a `CV` siempre que EAC esté definido.
+4. `VAC` **comparte signo** con `CV` siempre que EAC esté definido.
+
+**Un error de la IA que las pruebas detectaron.** Al planificar, la IA afirmó como invariante que "VAC
+tiene signo opuesto a CV". Al escribir la prueba correspondiente resultó falso. Desarrollando la fórmula:
+
+```
+VAC = BAC − EAC = BAC − BAC/CPI = BAC · (1 − 1/CPI)
+```
+
+Si CPI > 1, entonces `1/CPI < 1` y VAC es positivo — igual que CV. Los signos coinciden, no se invierten.
+Los propios datos del caso de referencia lo confirman: la Actividad 2 tiene CV = −2.000 y VAC = −4.000.
+
+Este episodio es la mejor evidencia de por qué las invariantes valen la pena: los tests de caso nominal
+habrían pasado igual, porque el error estaba en una afirmación *sobre* el modelo y no en el código.
 
 **Capa 3 — Dos errores sutiles detectados y demostrados con números.**
 
@@ -279,5 +302,6 @@ EVM y la demostración numérica está en la sección 5.
 
 | Rama | Estado |
 |---|---|
-| `develop` | Creada |
-| `feature/project-setup` | En curso |
+| `develop` | Rama de integración |
+| `feature/project-setup` | Integrada vía PR #1 |
+| `feature/evm-calculation-engine` | En curso |
