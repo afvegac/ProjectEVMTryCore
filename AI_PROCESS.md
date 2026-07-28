@@ -8,11 +8,6 @@ en que ocurre, textualmente y sin parafrasear.
 - **Repositorio:** https://github.com/afvegac/ProjectEVMTryCore
 - **Inicio del ejercicio:** 27 de julio de 2026
 
-> **Secciones que faltan por escribir, y que deben ser del candidato y no de la IA:** las otras herramientas
-> de IA usadas (§1), cómo validaste tu propia comprensión de las fórmulas (§3), la revisión de que los
-> desacuerdos estén contados como los viviste (§4) y la reflexión final (§7). Están marcadas con ✍️. Que las
-> escriba la IA sería precisamente el documento genérico que Trycore dice rechazar.
-
 ---
 
 ## 1. Herramientas de IA utilizadas
@@ -21,15 +16,17 @@ en que ocurre, textualmente y sin parafrasear.
 |---|---|
 | **Claude Code (Opus 5)** en terminal | Herramienta principal. Aprendizaje de EVM, diseño de arquitectura, implementación, pruebas y documentación. |
 
-**Por qué esta herramienta:** corre dentro de la terminal con acceso directo al sistema de archivos y a Git,
-así que trabaja sobre el repositorio real en lugar de sobre fragmentos copiados y pegados. Eso importa en
-esta prueba concretamente por dos razones: el historial de Git es parte calificada de la entrega, y este
-documento exige registrar prompts en orden cronológico —algo que se sostiene mucho mejor cuando la
-conversación y el código viven en el mismo lugar.
+**Por qué esta herramienta:** corre dentro de la terminal con acceso directo al sistema de archivos y a Git, así que trabaja sobre el repositorio real en lugar de sobre fragmentos copiados y pegados como otras IA, por ejemplo tuve la oportunidad de trabajar con chatGPT, anteriormente tenia licencia de Cursor y en APAP trabajan con Copilot, aun asi siempre me ha gustado mas Claude porque puedo tener una conversación mas fluida, entiende y trabaja bajo contextos y no bajo preguntas aisladas.
+Puntualmente para este desarrollo es importate concretamente por dos razones: el historial de Git es parte calificada de la entrega, y este
+documento exige registrar prompts en orden cronológico —algo que se sostiene mucho mejor cuando la conversación y el código viven en el mismo lugar.
 
-> ✍️ **Pendiente de completar por el candidato:** si usaste otras herramientas (búsquedas, videos, ChatGPT
-> para contrastar), agrégalas aquí con el motivo. Este cuadro debe reflejar tu proceso real.
+**Otros Recursos Usados:** Leí foros para entender el contexto, ya que de gestión de proyectos desconocía un poco, y el concepto de EVM era completamente nuevo para mí. Luego de ver foros y entender un poco más, decidí buscar videos más detallados en YouTube, así como videos con ejemplos claros y ejercicios.
 
+Después de eso, decidí tener una conversación con Claude para aclarar las dudas que tenía respecto a los cálculos y conceptos. Ya para finalizar, inicié con el contexto sobre el repositorio git creado previamente en el que iba a empezar a trabajar, para que Claude ya tuviera contexto sobre el tema de gestión de proyectos.
+
+**Técnica de Valor Ganado:** 
+https://www.youtube.com/watch?v=zhoji7SyWXA
+![alt text](image-1.png)
 ---
 
 ## 2. Registro cronológico de prompts
@@ -71,7 +68,7 @@ archivo vivo actualizado en cada rama, y añadió la regla de aprobación previa
 
 ### Prompt 4
 
-> analisemos bien las formulas para verq ue estan claras y no vamos a hacer reprocesos
+> analisemos bien las formulas para ver que estan claras y no vamos a hacer reprocesos
 
 **Respuesta de la IA:** análisis fórmula por fórmula, con caso de referencia calculado a mano, política de
 divisiones indefinidas, cuatro invariantes matemáticas y demostración numérica de por qué no se pueden
@@ -116,6 +113,34 @@ autónoma; solo los commits requieren autorización y revisión.
 
 ### Prompt 9
 
+> veo que en la funcion classifyIndex estas recibiendo 3 parametros del mismo tipo, eso nos podria jugar en contra ya que si por alguna razón se cambia el orden de llamado o la firma vamos a realizar los calculos incorrectos, quiero que dejes un solo objteo y ajustes las demas funciones o logica que use esos mismos parametros.
+
+**Contexto:** El resultado llegó al repositorio dentro del commit `edcf315`, hecho directamente por el
+candidato.
+
+**Resultado:** la IA había escrito una firma con tres parámetros del mismo tipo genérico en fila:
+
+```ts
+classifyIndex(index, aboveNeutral, atNeutral, belowNeutral)
+```
+
+Intercambiar dos de ellos compila sin una sola advertencia y clasifica mal **todas** las actividades en
+silencio; si las pruebas se hubieran escrito contra ese mismo orden equivocado, tampoco lo habrían
+detectado. El ajuste los agrupa en un objeto nombrado, donde el error deja de ser posible:
+
+```ts
+classifyIndex(index, {
+  above: CostStatus.UnderBudget,
+  at:    CostStatus.OnBudget,
+  below: CostStatus.OverBudget,
+})
+```
+
+El mismo criterio se aplicó a `analyzeIndex`, que ahora recibe
+`{ numerator, denominator, statuses, unavailableStatus, unavailableReason }`.
+
+### Prompt 10
+
 > continuemos con el desarrollo
 
 **Contexto:** la IA había propuesto el commit del motor de cálculo EVM y esperaba aprobación.
@@ -124,7 +149,7 @@ autónoma; solo los commits requieren autorización y revisión.
 escrito (módulos `projects/`, `activities/`, `evm/`, `docker-compose.yml`, `db/init.sql`) y se detuvo a
 preguntar por su origen en lugar de incorporarlos al commit.
 
-### Prompt 10
+### Prompt 11
 
 > continuemos con el desarrollo
 
@@ -135,7 +160,7 @@ EVM ya estaba hecho (`edcf315`, integrado en el PR #2) con exactamente los siete
 el código no identificado había sido descartado del árbol de trabajo. Continuó con la rama
 `feature/database-schema`.
 
-### Prompt 11
+### Prompt 12
 
 > instala docker y crea la imagen que necesitamos
 
@@ -144,14 +169,14 @@ y levantó el contenedor de PostgreSQL 16. Aclaró que no se construye una image
 `postgres:16-alpine` con los scripts montados en `/docker-entrypoint-initdb.d`, que es el mecanismo que
 PostgreSQL provee para ejecutarlos al crear el volumen.
 
-### Prompt 12
+### Prompt 13
 
 > donde tenemos el plan?
 
 **Respuesta de la IA:** indicó la ruta del plan de trabajo, fuera del repositorio, y resumió el avance
 frente a la secuencia de ramas.
 
-### Prompt 13
+### Prompt 14
 
 > copia el plan al repo en docs/ARCHITECTURE.md
 
@@ -159,7 +184,7 @@ frente a la secuencia de ramas.
 las decisiones tomadas después de escribirlo (puerto 5433, conversión de NUMERIC, versión de TypeORM) y
 omitiendo las secciones de proceso que ya viven en este documento.
 
-### Prompt 14
+### Prompt 15
 
 > si
 
@@ -169,7 +194,7 @@ verificar la capa de persistencia contra el contenedor en marcha.
 **Respuesta de la IA:** ejecutó ambos commits, abrió el PR #3, lo integró en `develop` y continuó con la
 rama `feature/project-crud`.
 
-### Prompt 15
+### Prompt 16
 
 > levanta el app quiero verla
 
@@ -178,13 +203,13 @@ scaffold de Angular— y levantó el API y el servidor de desarrollo. Demostró 
 sembrados y los cuatro casos del contrato de error (nombre vacío, propiedad no declarada, identificador
 inexistente e identificador que no es UUID), que devuelven el mismo esquema con distinto código.
 
-### Prompt 16
+### Prompt 17
 
 > si dale, sigue con actividades y el endpoint EVM
 
 **Respuesta de la IA:** integró el PR #4 y continuó con `feature/activity-crud`.
 
-### Prompt 17
+### Prompt 18
 
 > si, dale con el endpoint EVM
 
@@ -192,7 +217,7 @@ inexistente e identificador que no es UUID), que devuelven el mismo esquema con 
 presentación, el adaptador entre persistencia y dominio, y `GET /api/projects/:projectId/evm`. Verificó la
 salida contra el caso de referencia a través de toda la pila.
 
-### Prompt 18
+### Prompt 19
 
 > lo veo bien y sin errores de compilación, sube y continuemos con al front
 
@@ -200,7 +225,7 @@ salida contra el caso de referencia a través de toda la pila.
 cargó una guía de visualización de datos y **validó la paleta con su script** en lugar de elegir colores a
 ojo. Advirtió que no dispone de navegador para comprobar el resultado renderizado.
 
-### Prompt 19
+### Prompt 20
 
 > El dashboard esta ocupando mas de la pantalla, ajustalo para que se acople a la panatlla
 
@@ -208,7 +233,7 @@ ojo. Advirtió que no dispone de navegador para comprobar el resultado renderiza
 así que la tabla ancha imponía su ancho mínimo y empujaba el documento entero— y la corrigió con
 `min-width: 0`, además de sanear el `overflow` del SVG y la posición del tooltip.
 
-### Prompt 20
+### Prompt 21
 
 > la pantalla aun queda muy grande y se ven barras y scrolls innecesarios
 
@@ -216,30 +241,68 @@ así que la tabla ancha imponía su ancho mínimo y empujaba el documento entero
 tabla, los dos estados se plegaron en las celdas de CPI y SPI, y la gráfica se hizo más apaisada con tope de
 alto.
 
-### Prompt 21
+### Prompt 22
 
 > solo elimina el scroll horizontal
 
 **Respuesta de la IA:** reorganizó la tabla en fichas apiladas por debajo de 1200 px para eliminar todo
 desplazamiento horizontal.
 
-### Prompt 22
+### Prompt 23
 
 > No me gusta, el scroll de las actividades si estaba bien, el que estaba mal era el scroll de la pagina completa.
 
 **Respuesta de la IA:** revirtió la reorganización en fichas, devolvió a la tabla su desplazamiento propio y
 conservó solo las correcciones que afectaban al desplazamiento de la página.
 
-### Prompt 23
+### Prompt 24
 
 > Bien, verificado y aprobado
 
-### Prompt 24
+### Prompt 25
 
 > si, apruébalo y sigue con el README
 
 **Respuesta de la IA:** integró el PR #8 y redactó el `README.md` del repositorio, eliminando de paso los
 README de andamiaje que generan los CLI de Nest y Angular.
+
+### Prompt 26
+
+> de acuerdo todo lo veo bien, subamos los cambios
+
+**Respuesta de la IA:** integró el PR #9, ejecutó la verificación completa sobre `develop` y preparó la rama
+`release/1.0.0`.
+
+### Prompt 27
+
+> en los prompt veo que falta cuando te dije que ajustaras la funcion ya que podriamos tener un posible fallo si se enviaban los parametros en desorden
+
+**Respuesta de la IA:** verificó que ese prompt no estaba en el historial de la sesión y **se negó a
+inventarlo**: un prompt fabricado en un documento cuyo valor entero depende de ser un registro textual sería
+lo contrario de lo que se evalúa. Localizó el cambio en el commit `edcf315` y pidió el texto literal, que se
+transcribió en el Prompt 9.
+
+### Prompt 28
+
+> Levanta el app
+
+**Respuesta de la IA:** levantó el contenedor, el API y el dashboard, y comprobó que los datos habían vuelto
+al caso de referencia tras eliminarse la actividad de prueba desde la interfaz.
+
+### Prompt 29
+
+> quiero que actualices el archivo ARCHITECTURE.md ya que lo veo desactualizado
+
+**Respuesta de la IA:** contrastó el documento contra el código y corrigió siete desajustes, entre ellos un
+árbol de directorios que citaba un archivo inexistente. Verificó después que las treinta rutas documentadas
+existen realmente en el repositorio.
+
+### Prompt 30
+
+> si, apruébalo y cierra el release con el tag
+
+**Respuesta de la IA:** ejecutó el commit final, abrió el Pull Request de `release/1.0.0` hacia `main`, lo
+integró, etiquetó `v1.0.0` y devolvió el release a `develop`.
 
 ---
 
@@ -247,9 +310,16 @@ README de andamiaje que generan los CLI de Nest y Angular.
 
 ### Punto de partida
 
+Antes de iniciar con el uso de la IA hice mi investigación a traves de internet, lei foros, vi videos y realice un par de ejercicios propuestos principalmente en video de YouTube.
+
 Antes de escribir código pedí una explicación completa de la técnica (Prompt 1) y, tras leer el documento de
 la prueba, un análisis específico de las ocho fórmulas exigidas (Prompt 4). El objetivo explícito fue evitar
 reprocesos en el motor de cálculo, que es la pieza más cara de rehacer.
+
+### Entendimiento de las formulas antes de la IA
+Realice un ejercicio explicativo y desgloce cada formula en su contexto y explicación.
+https://www.youtube.com/watch?v=bS6hRnJISeg
+![alt text](image.png)
 
 ### Los tres conceptos que resultaron ser el núcleo
 
@@ -294,10 +364,8 @@ Cada actividad ejerce un escenario distinto a propósito: la 1 confirma la invar
 2 es el caso nominal con desviación en costo y cronograma; la 3 es el borde `EV = 0` y `AC = 0`, donde CPI
 es `0/0` —indeterminado, no cero—.
 
-> ✍️ **Pendiente de completar por el candidato:** describe con tus palabras cómo contrastaste estos números
-> por tu cuenta (hoja de cálculo, calculadora, comparación con un ejemplo de un video). El documento pide
-> explicar cómo validaste que **entendiste** las fórmulas, no solo que la IA las produjo.
-
+Hice el ejecricio a mano y comparo los resultados con el documento de la prueba.
+Ademas los calculos los trabaje con mas de una IA independiente obteniendo el mismo resultado final.
 ---
 
 ## 4. Decisiones donde no seguí lo que la IA sugirió
@@ -312,8 +380,8 @@ soportar múltiples métodos de acreditación del avance, y si construir autenti
 analizara el documento completo y que trabajáramos sobre lo que ahí se pide.
 
 **Por qué:** existía un contrato de requisitos explícito. La IA estaba diseñando funcionalidad que nadie
-pidió —Earned Schedule, curva S temporal, EDT jerárquica— mientras el documento define un modelo
-deliberadamente más simple: cinco campos por actividad y ocho indicadores. Construir de más habría consumido
+pidió —Earned Schedule, curva S temporal, EDT jerárquica— mientras el documento define un modelo mucho
+más simple: cinco campos por actividad y ocho indicadores. Construir de más habría consumido
 un plazo de un día y se habría leído como no saber interpretar un requerimiento.
 
 ### Decisión 2 — Estado explícito en vez de deducirlo de la variación
@@ -362,9 +430,21 @@ permite comparar filas alineadas, que es justamente para lo que sirve. Convertir
 comparación para resolver un problema que no existía. La IA tomó la petición al pie de la letra en lugar de
 preguntar cuál de los dos desplazamientos molestaba.
 
-> ✍️ **Pendiente de completar por el candidato:** revisa que estas decisiones estén redactadas como las
-> viviste y ajusta el razonamiento a tus palabras. Si surgen más desacuerdos durante el desarrollo, agrégalos
-> aquí en el momento en que ocurran.
+### Decisión 4 — Corregir una firma que la IA dejó frágil
+
+**Qué produjo la IA:** una función con tres parámetros del mismo tipo genérico, uno detrás de otro.
+
+```ts
+classifyIndex(index, aboveNeutral, atNeutral, belowNeutral)
+```
+
+**Qué hice:** no lo acepté. Pedí agruparlos en un único objeto nombrado y aplicar el mismo criterio a las
+demás funciones que compartían esos parámetros.
+
+**Por qué:** con tres argumentos del mismo tipo en fila, intercambiar dos compila sin una sola advertencia
+y clasifica mal **todas** las actividades en silencio. Y es un error que las pruebas no necesariamente
+atrapan: si se escriben contra el mismo orden equivocado, pasan igual. El compilador no puede ayudarte
+cuando todo tiene el mismo tipo; con un objeto nombrado, sí.
 
 ---
 
@@ -403,6 +483,9 @@ habrían pasado igual, porque el error estaba en una afirmación *sobre* el mode
 
 ```
 CPI promediando = (1,1111 + 0,8333) / 2      = 0,9722   ✗   correcto: 0,9524
+```
+![alt text](image-2.png)
+```
 SPI promediando = (1,0000 + 0,6667 + 0) / 3  = 0,5556   ✗   correcto: 0,5714
 ```
 
@@ -431,15 +514,6 @@ sembrados y exige 50.000**, que es exactamente la forma en que el defecto se man
 sembrado devuelve exactamente la tabla calculada a mano, atravesando HTTP, servicio, ORM, PostgreSQL y
 dominio. El consolidado sale `CPI 0,9524`, `SPI 0,5714`, `EAC 52.500` y `VAC −2.500`, y la actividad sin
 iniciar publica `costPerformanceIndex: null` con razón `NOT_STARTED` en lugar de un cero engañoso.
-
-**Capa 6 — Una prueba que dependía de datos que cualquiera puede cambiar.** Al documentar la API, la suite
-de integración empezó a fallar: el consolidado daba 350.000 en lugar de 50.000. No era un defecto del
-código: alguien había agregado una actividad al proyecto de ejemplo **desde el propio dashboard**.
-
-El defecto real estaba en las pruebas, que afirmaban contra los datos sembrados dando por supuesto que
-seguirían intactos. Un evaluador que probara la interfaz antes de ejecutar los tests los habría visto
-fallar sin motivo. Ahora cada prueba de integración **construye su propio proyecto** con las actividades del
-caso de referencia y lo elimina al terminar; los datos sembrados quedan solo para la demostración.
 
 **Un error propio que las pruebas atraparon.** Al escribir el redondeo se afirmó que `−4.000,005` debía
 quedar en `−4.000,01`. Es falso: `Math.round` de JavaScript resuelve los empates hacia +∞, de modo que
@@ -489,17 +563,13 @@ EVM y la demostración numérica está en la sección 5.
 ---
 
 ## 7. Reflexión honesta
+Si este fuera un proyecto real y no un ejercicio lo que haria seria buscar un gerente de proyectos, que me de un curso de gestión de proyectos y que me enseñe a manualmente a calcular los indicadores de EVM, luego que me de unos casos puntuales en los que le alla quedado mal y tuviera que corregir para saber donde puede haber posibles brechas o errores y evitarlas en mi pryecto.
 
-> ✍️ **Pendiente de completar por el candidato al cierre del ejercicio.**
->
-> El documento pide una reflexión honesta sobre qué harías diferente si repitieras el ejercicio. Esta
-> sección debe escribirse con tus palabras, al final, cuando tengas la perspectiva completa. Algunas
-> preguntas que pueden ayudarte a arrancar:
->
-> - ¿En qué momento la IA te llevó por un camino que tuviste que corregir, y cuánto tiempo costó?
-> - ¿Qué parte del sistema entiendes menos bien de lo que quisieras?
-> - ¿Qué decidiste no construir, y te parece que fue la decisión correcta?
-> - ¿Qué harías distinto en el orden de trabajo?
+Luego de eso levantaria un documento con casos reales que pondria a analizar con la IA. Ya con la IA Contextualizada inciaria con el desarrollo.
+
+En cuando al proyecto ya desarrollado es una app sencilla de una sola pantalla, con un dashboard de actividades y proyectos, y un CRUD para las actividades, que se pueden consultar y editar.
+Todo en un monorepositorio con dos aplicaciones independientes, que se puedan ejecutar en paralelo.
+Siento que la arquitectura es sencilla y basica para una aplicación pequeña como esta.
 
 ---
 
@@ -516,4 +586,20 @@ EVM y la demostración numérica está en la sección 5.
 | `feature/evm-api-endpoint` | Integrada vía PR #6 |
 | `feature/angular-dashboard` | Integrada vía PR #7 |
 | `feature/openapi-documentation` | Integrada vía PR #8 |
-| `feature/documentation` | En curso |
+| `feature/documentation` | Integrada vía PR #9 |
+| `release/1.0.0` | Cierre hacia `main`, etiquetada `v1.0.0` |
+
+## Verificación final ejecutada sobre `develop`
+
+| Comprobación | Resultado |
+|---|---|
+| Compilación del backend | Sin errores |
+| Lint del backend | Cero advertencias |
+| Pruebas unitarias | 84 · dominio EVM al 100 % en líneas, ramas y funciones |
+| Pruebas de integración contra PostgreSQL real | 36 |
+| Vulnerabilidades en dependencias de producción | 0 |
+| Compilación del frontend | Sin errores, 92 kB transferidos |
+| Lint del frontend | Cero advertencias |
+| Pruebas del frontend | 16 |
+| Documentación OpenAPI | 11 operaciones, 10 esquemas |
+| Comparación numérica manual | Coincide dígito a dígito |
