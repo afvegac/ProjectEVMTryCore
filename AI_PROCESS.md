@@ -8,6 +8,11 @@ en que ocurre, textualmente y sin parafrasear.
 - **Repositorio:** https://github.com/afvegac/ProjectEVMTryCore
 - **Inicio del ejercicio:** 27 de julio de 2026
 
+> **Secciones que faltan por escribir, y que deben ser del candidato y no de la IA:** las otras herramientas
+> de IA usadas (§1), cómo validaste tu propia comprensión de las fórmulas (§3), la revisión de que los
+> desacuerdos estén contados como los viviste (§4) y la reflexión final (§7). Están marcadas con ✍️. Que las
+> escriba la IA sería precisamente el documento genérico que Trycore dice rechazar.
+
 ---
 
 ## 1. Herramientas de IA utilizadas
@@ -229,6 +234,13 @@ conservó solo las correcciones que afectaban al desplazamiento de la página.
 
 > Bien, verificado y aprobado
 
+### Prompt 24
+
+> si, apruébalo y sigue con el README
+
+**Respuesta de la IA:** integró el PR #8 y redactó el `README.md` del repositorio, eliminando de paso los
+README de andamiaje que generan los CLI de Nest y Angular.
+
 ---
 
 ## 3. Cómo aprendí EVM y cómo validé las fórmulas
@@ -435,9 +447,22 @@ quedar en `−4.000,01`. Es falso: `Math.round` de JavaScript resuelve los empat
 el comportamiento, evitando fijar como contrato un caso que además no es alcanzable aquí —los importes
 provienen de divisiones y nunca caen exactamente en la mitad—.
 
-> ✍️ **Pendiente de completar por el candidato:** una vez el API esté corriendo, compara la salida de
-> `GET /api/projects/:id/evm` contra la tabla de la sección 3, dígito a dígito, y deja constancia aquí del
-> resultado.
+**Resultado de la comparación manual.** Con el sistema en marcha se consultó
+`GET /api/projects/11111111-1111-4111-8111-111111111111/evm` y se contrastó contra la tabla de la sección 3.
+Coincide dígito a dígito:
+
+```
+Actividad                 PV      EV      AC      CV      SV      CPI     SPI     EAC     VAC
+Diseño de arquitectura  10000   10000    9000   +1000       0   1,1111  1,0000   9000   +1000
+Desarrollo del backend  15000   10000   12000   -2000   -5000   0,8333  0,6667  24000   -4000
+Pruebas de integración  10000       0       0       0  -10000     null  0,0000    null    null
+
+Consolidado             35000   20000   21000   -1000  -15000   0,9524  0,5714  52500   -2500
+Estado                                                          OVER_BUDGET      BEHIND
+```
+
+El recorrido cubre HTTP, controlador, servicio, ORM, PostgreSQL y dominio, así que valida la cadena
+completa y no solo la función de cálculo.
 
 ---
 
@@ -490,5 +515,5 @@ EVM y la demostración numérica está en la sección 5.
 | `feature/activity-crud` | Integrada vía PR #5 |
 | `feature/evm-api-endpoint` | Integrada vía PR #6 |
 | `feature/angular-dashboard` | Integrada vía PR #7 |
-| `feature/openapi-documentation` | En curso |
-| `feature/documentation` | Pendiente |
+| `feature/openapi-documentation` | Integrada vía PR #8 |
+| `feature/documentation` | En curso |
