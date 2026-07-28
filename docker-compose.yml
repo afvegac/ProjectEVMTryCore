@@ -1,0 +1,27 @@
+services:
+  database:
+    image: postgres:16-alpine
+    container_name: evm-database
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DATABASE_NAME:-evm}
+      POSTGRES_USER: ${DATABASE_USER:-evm}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD:-evm}
+    ports:
+      # Se publica en 5433 y no en 5432 para no chocar con una instalación
+      # local de PostgreSQL, que es lo habitual en las máquinas de desarrollo.
+      - '${DATABASE_PORT:-5433}:5432'
+    volumes:
+      # Docker ejecuta estos scripts en orden alfabético la primera vez que se
+      # crea el volumen de datos: primero el esquema, después los datos de ejemplo.
+      - ./db/init:/docker-entrypoint-initdb.d:ro
+      - evm-database-data:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        ['CMD-SHELL', 'pg_isready -U ${DATABASE_USER:-evm} -d ${DATABASE_NAME:-evm}']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  evm-database-data:

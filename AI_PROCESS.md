@@ -109,6 +109,51 @@ autónoma; solo los commits requieren autorización y revisión.
 **Respuesta de la IA:** ejecutó el commit `9ddaa56` con 37 archivos, publicó `develop` y
 `feature/project-setup`, y abrió el Pull Request #1 hacia `develop`.
 
+### Prompt 9
+
+> continuemos con el desarrollo
+
+**Contexto:** la IA había propuesto el commit del motor de cálculo EVM y esperaba aprobación.
+
+**Respuesta de la IA:** al revisar el estado del repositorio detectó unos treinta archivos que no había
+escrito (módulos `projects/`, `activities/`, `evm/`, `docker-compose.yml`, `db/init.sql`) y se detuvo a
+preguntar por su origen en lugar de incorporarlos al commit.
+
+### Prompt 10
+
+> continuemos con el desarrollo
+
+**Contexto:** repetido tras interrumpir el cuestionario de la IA sobre el origen de esos archivos.
+
+**Respuesta de la IA:** continuó sin insistir. Al volver a inspeccionar encontró que el commit del motor
+EVM ya estaba hecho (`edcf315`, integrado en el PR #2) con exactamente los siete archivos propuestos, y que
+el código no identificado había sido descartado del árbol de trabajo. Continuó con la rama
+`feature/database-schema`.
+
+### Prompt 11
+
+> instala docker y crea la imagen que necesitamos
+
+**Respuesta de la IA:** instaló Docker Desktop 4.84.0 con winget, arrancó el servicio y el motor sobre WSL2,
+y levantó el contenedor de PostgreSQL 16. Aclaró que no se construye una imagen propia: se usa la oficial
+`postgres:16-alpine` con los scripts montados en `/docker-entrypoint-initdb.d`, que es el mecanismo que
+PostgreSQL provee para ejecutarlos al crear el volumen.
+
+### Prompt 12
+
+> donde tenemos el plan?
+
+**Respuesta de la IA:** indicó la ruta del plan de trabajo, fuera del repositorio, y resumió el avance
+frente a la secuencia de ramas.
+
+### Prompt 13
+
+> copia el plan al repo en docs/ARCHITECTURE.md
+
+**Respuesta de la IA:** trasladó el plan al repositorio como documento de arquitectura, actualizándolo con
+las decisiones tomadas después de escribirlo (puerto 5433, conversión de NUMERIC, versión de TypeORM) y
+omitiendo las secciones de proceso que ya viven en este documento.
+
 ---
 
 ## 3. Cómo aprendí EVM y cómo validé las fórmulas
@@ -255,6 +300,14 @@ CPI a 2 dec. = 0,95          →  EAC = 52.631,58   ✗  (+131,58)
 
 Por eso `EAC` se calcula desde el CPI sin redondear y el redondeo se aplica solo al serializar la respuesta.
 
+**Capa 4 — Un fallo silencioso previsto y cubierto con una prueba.** El driver `pg` devuelve las columnas
+`NUMERIC` como **cadena de texto**, a propósito, para no perder precisión. Sin una conversión explícita, el
+presupuesto llegaría al motor como `"10000.00"` y en la consolidación el operador `+` **concatenaría en
+lugar de sumar**, produciendo `"010000.0020000.0020000.00"` en vez de `50000` — sin lanzar ningún error.
+
+La prueba de integración no comprueba el tipo de un campo suelto, sino que **suma los tres presupuestos
+sembrados y exige 50.000**, que es exactamente la forma en que el defecto se manifestaría.
+
 > ✍️ **Pendiente de completar por el candidato:** una vez el API esté corriendo, compara la salida de
 > `GET /api/projects/:id/evm` contra la tabla de la sección 3, dígito a dígito, y deja constancia aquí del
 > resultado.
@@ -304,4 +357,5 @@ EVM y la demostración numérica está en la sección 5.
 |---|---|
 | `develop` | Rama de integración |
 | `feature/project-setup` | Integrada vía PR #1 |
-| `feature/evm-calculation-engine` | En curso |
+| `feature/evm-calculation-engine` | Integrada vía PR #2 |
+| `feature/database-schema` | En curso |
