@@ -1,0 +1,121 @@
+.panel {
+  /**
+   * `min-width: 0` es lo que impide que la tabla ancha arrastre a la página entera: los hijos de una
+   * rejilla arrancan con `min-width: auto`, así que sin esto su contenido mínimo se impone sobre la
+   * columna y el desplazamiento horizontal aparece en el documento en lugar de aquí dentro.
+   */
+  min-width: 0;
+  max-width: 100%;
+  padding: 20px;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.panel__title {
+  margin: 0 0 12px;
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+/* Catorce columnas de cifras no caben en cualquier pantalla: la tabla se desplaza dentro de su tarjeta. */
+.panel__scroll {
+  overflow-x: auto;
+}
+
+.empty {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+
+th,
+td {
+  padding: 7px 9px;
+  text-align: left;
+  border-bottom: 1px solid var(--gridline);
+  vertical-align: middle;
+}
+
+thead th {
+  font-size: 0.6875rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--baseline);
+}
+
+tbody tr:last-child th,
+tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.col-name {
+  white-space: normal;
+  min-width: 9rem;
+  font-weight: 600;
+}
+
+.col-number {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Índice y estado comparten celda: el estado es la lectura del propio índice, no un dato aparte. */
+.col-indicator {
+  text-align: right;
+}
+
+.indicator__value {
+  display: block;
+  font-variant-numeric: tabular-nums;
+}
+
+.negative {
+  color: var(--status-critical);
+}
+
+.absent {
+  color: var(--text-muted);
+}
+
+.col-actions {
+  white-space: nowrap;
+}
+
+button {
+  padding: 3px 8px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text-primary);
+  font-size: 0.6875rem;
+}
+
+button + button {
+  margin-left: 6px;
+}
+
+button:hover {
+  border-color: var(--baseline);
+}
+
+button.danger:hover {
+  color: var(--status-critical);
+  border-color: var(--status-critical);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}

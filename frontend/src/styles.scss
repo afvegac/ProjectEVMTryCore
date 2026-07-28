@@ -1,0 +1,90 @@
+/**
+ * Fichas de diseño del dashboard.
+ *
+ * Los tres colores de serie (PV, EV, AC) y las superficies provienen de una paleta validada con
+ * herramienta, no elegida a ojo: superan la banda de luminosidad, el piso de croma, la separación
+ * para daltonismo y el contraste contra la superficie en ambos modos. El aqua del AC queda en 2,74:1
+ * sobre la superficie clara, por debajo de 3:1, y por eso la gráfica siempre va acompañada de
+ * leyenda y de la tabla completa de valores: el color nunca es el único canal.
+ */
+
+:root {
+  color-scheme: light;
+
+  --surface-1: #fcfcfb;
+  --page-plane: #f9f9f7;
+  --text-primary: #0b0b0b;
+  --text-secondary: #52514e;
+  --text-muted: #898781;
+  --gridline: #e1e0d9;
+  --baseline: #c3c2b7;
+  --border: rgba(11, 11, 11, 0.1);
+
+  --series-planned: #2a78d6;
+  --series-earned: #eb6834;
+  --series-actual: #1baf7a;
+
+  --status-good: #0ca30c;
+  --status-critical: #d03b3b;
+  --status-neutral: #898781;
+
+  --radius: 10px;
+  --font-sans: system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:where(:not([data-theme='light'])) {
+    color-scheme: dark;
+
+    --surface-1: #1a1a19;
+    --page-plane: #0d0d0d;
+    --text-primary: #ffffff;
+    --text-secondary: #c3c2b7;
+    --text-muted: #898781;
+    --gridline: #2c2c2a;
+    --baseline: #383835;
+    --border: rgba(255, 255, 255, 0.1);
+
+    --series-planned: #3987e5;
+    --series-earned: #d95926;
+    --series-actual: #199e70;
+  }
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+
+  --surface-1: #1a1a19;
+  --page-plane: #0d0d0d;
+  --text-primary: #ffffff;
+  --text-secondary: #c3c2b7;
+  --text-muted: #898781;
+  --gridline: #2c2c2a;
+  --baseline: #383835;
+  --border: rgba(255, 255, 255, 0.1);
+
+  --series-planned: #3987e5;
+  --series-earned: #d95926;
+  --series-actual: #199e70;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  background: var(--page-plane);
+  color: var(--text-primary);
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+}
+
+input,
+select {
+  font: inherit;
+}
